@@ -1,6 +1,6 @@
 {
   "name": "modl-parser",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A MODL parser in JavaScript",
   "main": "index.js",
   "types": "index.d.ts",
