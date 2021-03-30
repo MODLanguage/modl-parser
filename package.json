@@ -1,11 +1,11 @@
 {
   "name": "modl-parser",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A MODL parser in JavaScript",
   "main": "index.js",
   "dependencies": {
     "@types/antlr4": "^4.7.2",
-    "antlr4": "^4.7.3",
+    "antlr4": "^4.7.2",
     "ts-loader": "^7.0.5",
     "typescript": "^4.0.2",
     "fs": "0.0.1-security"
