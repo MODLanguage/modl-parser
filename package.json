@@ -1,6 +1,6 @@
 {
   "name": "modl-parser",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A MODL parser in JavaScript",
   "main": "index.js",
   "dependencies": {
@@ -23,6 +23,6 @@
   },
   "files": [
     "*.js",
-    "*.ts"
+    "src"
   ]
 }
