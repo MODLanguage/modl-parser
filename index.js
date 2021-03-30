@@ -1,7 +1,9 @@
-const { MODLLexer } = require('./MODLLexer');
-const { MODLParser } = require('./MODLParser');
+'use strict';
+
+const lexer = require('./src/MODLLexer');
+const parser = require('./src/MODLParser');
 
 module.exports = {
-  Parser: MODLParser,
-  Lexer: MODLLexer
+  MODLLexer: lexer.MODLLexer,
+  MODLParser: parser.MODLParser
 };
