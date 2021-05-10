@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var MODLTokeniser_1 = require("./MODLTokeniser");
-var tokens = MODLTokeniser_1.tokeniser('x="The string \\"hello\\" is quoted"');
-console.log(JSON.stringify(tokens));
+var MODLParser_1 = require("./MODLParser");
+var modl = MODLParser_1.parser('a=b');
+console.log(JSON.stringify(modl));
 //# sourceMappingURL=Scratch.js.map

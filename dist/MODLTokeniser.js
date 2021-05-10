@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokeniser = exports.Token = void 0;
+exports.TokenType = exports.tokeniser = exports.Token = void 0;
 var Token = (function () {
     function Token(type, value) {
         this.type = type;
@@ -47,7 +47,7 @@ var TokenType;
     TokenType[TokenType["STRING"] = 10] = "STRING";
     TokenType[TokenType["INTEGER"] = 11] = "INTEGER";
     TokenType[TokenType["FLOAT"] = 12] = "FLOAT";
-})(TokenType || (TokenType = {}));
+})(TokenType = exports.TokenType || (exports.TokenType = {}));
 var Context = (function () {
     function Context(s) {
         this.s = s;

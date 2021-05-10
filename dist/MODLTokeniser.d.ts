@@ -4,7 +4,7 @@ export declare class Token {
     constructor(type: TokenType, value: string | number | boolean | null);
 }
 export declare const tokeniser: (s: string) => Token[];
-declare enum TokenType {
+export declare enum TokenType {
     LPAREN = 0,
     RPAREN = 1,
     LBRACKET = 2,
@@ -19,4 +19,3 @@ declare enum TokenType {
     INTEGER = 11,
     FLOAT = 12
 }
-export {};

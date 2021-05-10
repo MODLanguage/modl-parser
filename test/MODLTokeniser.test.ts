@@ -145,7 +145,7 @@ describe('MODLTokeniser', () => {
     expect(tokens.length).to.equal(3);
     expect(tokens[0].value).to.equal('x');
     expect(tokens[1].value).to.equal('=');
-    expect(tokens[2].value).to.equal('"The string \\"hello\\" is quoted"');
+    expect(tokens[2].value).to.equal('`The string \\`hello\\` is quoted`');
   });
 
   it('Can tokenise a MODL pair with graves inside graves - 2', () => {
@@ -153,6 +153,14 @@ describe('MODLTokeniser', () => {
     expect(tokens.length).to.equal(3);
     expect(tokens[0].value).to.equal('x');
     expect(tokens[1].value).to.equal('=');
-    expect(tokens[2].value).to.equal('"The string ~"hello~" is quoted"');
+    expect(tokens[2].value).to.equal('`The string ~`hello~` is quoted`');
+  });
+
+  it('Can tokenise a MODL pair with a unicode value', () => {
+    const tokens = tokeniser('x=The string \\u0041 has unicode');
+    expect(tokens.length).to.equal(3);
+    expect(tokens[0].value).to.equal('x');
+    expect(tokens[1].value).to.equal('=');
+    expect(tokens[2].value).to.equal('The string \\u0041 has unicode');
   });
 });
