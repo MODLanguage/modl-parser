@@ -12,16 +12,6 @@
         "<node_internals>/**"
       ],
       "type": "pwa-node"
-    },
-    {
-      "name": "Debug ANTLR4 grammar",
-      "type": "antlr-debug",
-      "request": "launch",
-      "input": "/Users/tonywalmsley/work/num/grammar/test.txt",
-      "grammar": "/Users/tonywalmsley/work/num/grammar/antlr4/MODLParser.g4",
-      "startRule": "modl",
-      "printParseTree": true,
-      "visualParseTree": true
     }
   ]
 }
