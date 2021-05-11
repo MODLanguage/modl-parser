@@ -47,11 +47,11 @@ export class TokenStream {
   }
 
   /**
-   * Get the number of remaining tokens in the stream.
+   * Check for remaining tokens in the stream.
    *
-   * @returns the number of remaining tokens in the stream.
+   * @returns true if there are remaining tokens in the stream.
    */
-  length(): number {
-    return this.tokens.length;
+  empty(): boolean {
+    return this.tokens.length === 0;
   }
 }

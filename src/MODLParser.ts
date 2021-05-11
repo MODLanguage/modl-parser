@@ -71,7 +71,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
     case TokenType.LBRACKET:
     case TokenType.RBRACKET:
     case TokenType.EQUALS: {
-      if (s.length() === 0) {
+      if (s.empty()) {
         throw new ParserException(`Unexpected token: ${tok.toS()}`);
       }
       s.pushBack(tok);
@@ -134,7 +134,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
  */
 const parseStructures = (s: TokenStream): ModlStructure[] => {
   const result: ModlStructure[] = [];
-  while (s.length() > 0) {
+  while (!s.empty()) {
     result.push(parseModlValue(s) as ModlStructure);
     const maybeStructSep = s.next();
     if (maybeStructSep) {
@@ -160,7 +160,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   if (firstToken.type === TokenType.LBRACKET) {
     // Its an array
     const arrayEntries: ModlValue[] = [];
-    while (s.length() > 0) {
+    while (!s.empty()) {
       let peek = s.peek();
       if (peek && peek.type === TokenType.RBRACKET) {
         // Consume the peeked token and break
@@ -193,7 +193,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   } else if (firstToken.type === TokenType.LPAREN) {
     // Its a map
     const mapEntries: ModlPair[] = [];
-    while (s.length() > 0) {
+    while (!s.empty()) {
       let peek = s.peek();
       if (peek && peek.type === TokenType.RPAREN) {
         // Consume the peeked token and break

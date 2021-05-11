@@ -104,13 +104,15 @@ class Context {
    *
    * @returns true if the are more possible tokens to be found.
    */
-  next(): boolean {
+  private next(): boolean {
+    // Skip white spaces.
     let ws = this.s.charAt(this.tokStart);
     while (ws != '' && WS.includes(ws)) {
       this.tokStart++;
       ws = this.s.charAt(this.tokStart);
     }
     if (this.tokStart >= this.s.length) {
+      // Nothing left to parse.
       return false;
     }
     let tokType;
@@ -186,7 +188,7 @@ class Context {
    * @param quoteChar the quote character for this quoted string
    * @returns the end position of the next token in the string.
    */
-  scanToEndOfQuoted(s: string, start: number, quoteChar: string): number {
+  private scanToEndOfQuoted(s: string, start: number, quoteChar: string): number {
     let end = start + 1;
 
     while (end < s.length) {
@@ -214,7 +216,7 @@ class Context {
    * @param start the start position
    * @returns the end position of the next token in the string
    */
-  scanToEndOfString(s: string, start: number): number {
+  private scanToEndOfString(s: string, start: number): number {
     let end = start + 1;
     while (end < s.length && !nonStringTokens.includes(s.charAt(end))) {
       end++;
