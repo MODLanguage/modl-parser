@@ -54,4 +54,22 @@ describe('MODLParser', () => {
     const value = pair.value as ModlString;
     expect(value.value).to.equal('b');
   });
+
+  it('Can parse a list of MODL Pairs at the root', () => {
+    const modl = parser('a=b;c=d;e=f');
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(3);
+    const p1 = structures[0] as ModlPair;
+    const p2 = structures[1] as ModlPair;
+    const p3 = structures[2] as ModlPair;
+    const v1 = p1.value as ModlString;
+    const v2 = p2.value as ModlString;
+    const v3 = p3.value as ModlString;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('b');
+    expect(v2.value).to.equal('d');
+    expect(v3.value).to.equal('f');
+  });
 });

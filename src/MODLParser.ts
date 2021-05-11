@@ -10,7 +10,7 @@ import {
   ModlQuoted,
   ModlString,
   ModlStructure,
-  ModlValue
+  ModlValue,
 } from './Model';
 import { Token, tokeniser, TokenType } from './MODLTokeniser';
 import { TokenStream } from './TokenStream';
@@ -86,6 +86,14 @@ const parseStructures = (s: TokenStream): ModlStructure[] => {
   const result: ModlStructure[] = [];
   while (s.length() > 0) {
     result.push(parseModlValue(s) as ModlStructure);
+    const maybeStructSep = s.next();
+    if (maybeStructSep) {
+      if (maybeStructSep.type === TokenType.STRUCT_SEP) {
+        // ok
+      } else {
+        throw new ParserException(`Expected ';'`);
+      }
+    }
   }
   return result;
 };
@@ -100,12 +108,13 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       const ms = parseModlValue(s);
       arrayEntries.push(ms);
 
-      const peek = s.next();
+      const peek = s.peek();
       if (peek) {
         if (peek.type === TokenType.RBRACKET) {
+          // Consume the peeked token
+          s.next();
           break;
         }
-        s.pushBack(peek);
       } else {
         throw new ParserException(`Expected ']'`);
       }
@@ -121,27 +130,41 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       const peek = s.next();
       if (peek) {
         if (peek.type === TokenType.RPAREN) {
+          // Consume the peeked token
+          s.next();
           break;
         }
-        s.pushBack(peek);
       } else {
         throw new ParserException(`Expected ')'`);
       }
     }
     return new ModlMap(mapEntries);
-  } else if (firstToken.type === TokenType.STRING) {
+  } else if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.QUOTED) {
+    const peek = s.peek();
+
     const key = firstToken.value as string;
-    const equalsOrStructure = s.next();
-    if (equalsOrStructure) {
-      if (equalsOrStructure.type !== TokenType.EQUALS) {
-        s.pushBack(equalsOrStructure);
-      }
+    if (peek && peek.type === TokenType.EQUALS) {
+      // its a pair
+      // Consume the = token
+      s.next();
       return new ModlPair(key, parseModlValue(s));
-    } else {
-      return new ModlString(firstToken.value as string);
     }
-  } else if (firstToken.type === TokenType.QUOTED) {
-    return new ModlQuoted(firstToken.value as string);
+
+    if (peek && (peek.type === TokenType.LBRACKET || peek.type === TokenType.LPAREN)) {
+      // Its still a pair
+      return new ModlPair(key, parseModlValue(s));
+    }
+
+    if (!peek || (peek && peek.type === TokenType.STRUCT_SEP)) {
+      // Its simply a string or quoted string
+      if (firstToken.type === TokenType.STRING) {
+        return new ModlString(firstToken.value as string);
+      } else {
+        return new ModlQuoted(firstToken.value as string);
+      }
+    }
+
+    throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken.value)}'`);
   } else if (firstToken.type === TokenType.INTEGER) {
     return new ModlInteger(firstToken.value as number);
   } else if (firstToken.type === TokenType.FLOAT) {
@@ -163,4 +186,4 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken.value)}'`);
 };
 
-class ParserException extends Error { }
+class ParserException extends Error {}
