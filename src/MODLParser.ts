@@ -111,9 +111,13 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       const peek = s.peek();
       if (peek) {
         if (peek.type === TokenType.RBRACKET) {
-          // Consume the peeked token
+          // Consume the peeked token and break
           s.next();
           break;
+        }
+        if (peek.type === TokenType.STRUCT_SEP) {
+          // Consume the peeked token and continue
+          s.next();
         }
       } else {
         throw new ParserException(`Expected ']'`);
@@ -155,7 +159,11 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       return new ModlPair(key, parseModlValue(s));
     }
 
-    if (!peek || (peek && peek.type === TokenType.STRUCT_SEP)) {
+    if (
+      !peek ||
+      (peek &&
+        (peek.type === TokenType.STRUCT_SEP || peek.type === TokenType.RPAREN || peek.type === TokenType.RBRACKET))
+    ) {
       // Its simply a string or quoted string
       if (firstToken.type === TokenType.STRING) {
         return new ModlString(firstToken.value as string);
