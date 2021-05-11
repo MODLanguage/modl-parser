@@ -15,7 +15,7 @@ export const tokeniser = (s: string): Token[] => {
 };
 
 const WS = ' \t\r\n';
-const nonStringTokens = '[]();"`=';
+const nonStringTokens = '[]();"=';
 const INTEGER_REGEX = new RegExp(/^-?\d+$/);
 const FLOAT_REGEX = new RegExp(/^[-+]?([0-9]*[.])?[0-9]+([eE][-+]?\d+)?$/);
 
