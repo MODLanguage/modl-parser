@@ -18,6 +18,8 @@ const bad = [
   '[][]',
   '(a=b;)',
   '[a=b;]',
+  '[];;',
+  '();;',
 ];
 describe('MODLParser bad grammar', () => {
   it('Can report bad grammar', () => {

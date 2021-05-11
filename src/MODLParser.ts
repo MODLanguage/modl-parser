@@ -45,7 +45,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
     case TokenType.RBRACKET:
     case TokenType.STRUCT_SEP:
     case TokenType.EQUALS: {
-      throw new ParserException(`Invalid token: ${JSON.stringify(tok)}`);
+      throw new ParserException(`Invalid token: ${tok.toS()}`);
     }
     case TokenType.NULL: {
       result = ModlBoolNull.ModlNull;
@@ -76,7 +76,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
       break;
     }
     default: {
-      throw new ParserException(`Unknown token type in: ${JSON.stringify(tok)}`);
+      throw new ParserException(`Unknown token type in: ${tok.toS()}`);
     }
   }
   return result;
@@ -91,7 +91,7 @@ const parseStructures = (s: TokenStream): ModlStructure[] => {
       if (maybeStructSep.type === TokenType.STRUCT_SEP) {
         // ok
       } else {
-        throw new ParserException(`Expected ';' near ${JSON.stringify(maybeStructSep)}`);
+        throw new ParserException(`Expected ';' near ${maybeStructSep.toS()}`);
       }
     }
   }
@@ -130,7 +130,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
           }
         }
       } else {
-        throw new ParserException(`Expected ']' near ${JSON.stringify(firstToken)}`);
+        throw new ParserException(`Expected ']' near ${firstToken.toS()}`);
       }
     }
     return new ModlArray(arrayEntries);
@@ -163,7 +163,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
           }
         }
       } else {
-        throw new ParserException(`Expected ')' near ${JSON.stringify(firstToken)}`);
+        throw new ParserException(`Expected ')' near ${firstToken.toS()}`);
       }
     }
     return new ModlMap(mapEntries);
@@ -196,7 +196,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       }
     }
 
-    throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken)}'`);
+    throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
   } else if (firstToken.type === TokenType.INTEGER) {
     return new ModlInteger(firstToken.value as number);
   } else if (firstToken.type === TokenType.FLOAT) {
@@ -215,7 +215,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
     }
   }
 
-  throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken)}'`);
+  throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
 };
 
 class ParserException extends Error {}

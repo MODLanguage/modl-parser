@@ -4,7 +4,10 @@ export class Token {
     readonly value: string | number | boolean | null,
     readonly from: number,
     readonly to: number
-  ) {}
+  ) { }
+  toS(): string {
+    return `type: ${this.type.toString()}, from: ${this.from}, to: ${this.to}, value: "${this.value}"`;
+  }
 }
 
 export const tokeniser = (s: string): Token[] => {
@@ -17,19 +20,19 @@ const INTEGER_REGEX = new RegExp(/^-?\d+$/);
 const FLOAT_REGEX = new RegExp(/^[-+]?([0-9]*[.])?[0-9]+([eE][-+]?\d+)?$/);
 
 export enum TokenType {
-  LPAREN,
-  RPAREN,
-  LBRACKET,
-  RBRACKET,
-  STRUCT_SEP,
-  NULL,
-  TRUE,
-  FALSE,
-  EQUALS,
-  QUOTED,
-  STRING,
-  INTEGER,
-  FLOAT,
+  LPAREN = 'LPAREN',
+  RPAREN = 'RPAREN',
+  LBRACKET = 'LBRACKET',
+  RBRACKET = 'RBRACKET',
+  STRUCT_SEP = 'STRUCT_SEP',
+  NULL = 'NULL',
+  TRUE = 'TRUE',
+  FALSE = 'FALSE',
+  EQUALS = 'EQUALS',
+  QUOTED = 'QUOTED',
+  STRING = 'STRING',
+  INTEGER = 'INTEGER',
+  FLOAT = 'FLOAT',
 }
 
 class Context {
@@ -37,7 +40,7 @@ class Context {
   private tokEnd = 0;
   public tokens = new Array<Token>();
 
-  constructor(readonly s: string) {}
+  constructor(readonly s: string) { }
 
   parse(): Token[] {
     while (this.next()) {
@@ -145,4 +148,4 @@ class Context {
   }
 }
 
-class TokeniserException extends Error {}
+class TokeniserException extends Error { }

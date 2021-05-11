@@ -117,6 +117,16 @@ describe('MODLParser', () => {
     expect(value.value).to.equal('`b`');
   });
 
+  it('Can parse a MODL Pair with quotes and embedded MODL tokens', () => {
+    const modl = parser('"a=[];()b"="c=[];()d"');
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('"a=[];()b"');
+    const value = pair.value as ModlString;
+    expect(value.value).to.equal('"c=[];()d"');
+  });
+
   it('Can parse a list of MODL Pairs at the root', () => {
     const modl = parser('a=b;c=d;e=f');
     const structures = modl.s as ModlStructure[];
