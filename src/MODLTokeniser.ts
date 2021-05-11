@@ -1,5 +1,10 @@
 export class Token {
-  constructor(readonly type: TokenType, readonly value: string | number | boolean | null) {}
+  constructor(
+    readonly type: TokenType,
+    readonly value: string | number | boolean | null,
+    readonly from: number,
+    readonly to: number
+  ) {}
 }
 
 export const tokeniser = (s: string): Token[] => {
@@ -93,18 +98,18 @@ class Context {
     const tokValue = this.s.substring(this.tokStart, this.tokEnd).trim();
     if (tokValue.match(INTEGER_REGEX)) {
       const number = parseInt(tokValue);
-      this.tokens.push(new Token(TokenType.INTEGER, number));
+      this.tokens.push(new Token(TokenType.INTEGER, number, this.tokStart, this.tokEnd));
     } else if (tokValue.match(FLOAT_REGEX)) {
       const number = parseFloat(tokValue);
-      this.tokens.push(new Token(TokenType.FLOAT, number));
+      this.tokens.push(new Token(TokenType.FLOAT, number, this.tokStart, this.tokEnd));
     } else if (tokValue === 'null') {
-      this.tokens.push(new Token(TokenType.NULL, null));
+      this.tokens.push(new Token(TokenType.NULL, null, this.tokStart, this.tokEnd));
     } else if (tokValue === 'true') {
-      this.tokens.push(new Token(TokenType.TRUE, true));
+      this.tokens.push(new Token(TokenType.TRUE, true, this.tokStart, this.tokEnd));
     } else if (tokValue === 'false') {
-      this.tokens.push(new Token(TokenType.FALSE, false));
+      this.tokens.push(new Token(TokenType.FALSE, false, this.tokStart, this.tokEnd));
     } else {
-      this.tokens.push(new Token(tokType, tokValue));
+      this.tokens.push(new Token(tokType, tokValue, this.tokStart, this.tokEnd));
     }
     this.tokStart = this.tokEnd;
     return this.tokEnd < this.s.length;
@@ -126,7 +131,7 @@ class Context {
       end++;
     }
     if (s.charAt(end) !== quoteChar) {
-      throw new TokeniserException(`Unclosed quote: ${quoteChar} in ${this.s}`);
+      throw new TokeniserException(`Unclosed quote: ${quoteChar} in ${this.s} near ${start}:${end}`);
     }
     return end + 1;
   }

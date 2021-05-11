@@ -1,7 +1,7 @@
 {
   "name": "modl-parser",
-  "version": "0.0.9",
-  "description": "A MODL parser in JavaScript",
+  "version": "0.0.10",
+  "description": "A MODL parser in TypeScript",
   "main": "index.js",
   "dependencies": {
     "fs": "0.0.1-security",
@@ -46,7 +46,7 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MODLanguage/typescript-modl-interpreter.git"
+    "url": "https://github.com/MODLanguage/typescript-modl-parser.git"
   },
   "files": [
     "*.js",

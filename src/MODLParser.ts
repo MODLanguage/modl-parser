@@ -91,7 +91,7 @@ const parseStructures = (s: TokenStream): ModlStructure[] => {
       if (maybeStructSep.type === TokenType.STRUCT_SEP) {
         // ok
       } else {
-        throw new ParserException(`Expected ';'`);
+        throw new ParserException(`Expected ';' near ${JSON.stringify(maybeStructSep)}`);
       }
     }
   }
@@ -120,7 +120,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
           s.next();
         }
       } else {
-        throw new ParserException(`Expected ']'`);
+        throw new ParserException(`Expected ']' near ${JSON.stringify(firstToken)}`);
       }
     }
     return new ModlArray(arrayEntries);
@@ -131,15 +131,19 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       const mp = parseModlValue(s);
       mapEntries.push(mp as ModlPair);
 
-      const peek = s.next();
+      const peek = s.peek();
       if (peek) {
         if (peek.type === TokenType.RPAREN) {
           // Consume the peeked token
           s.next();
           break;
         }
+        if (peek.type === TokenType.STRUCT_SEP) {
+          // Consume the peeked token and continue
+          s.next();
+        }
       } else {
-        throw new ParserException(`Expected ')'`);
+        throw new ParserException(`Expected ')' near ${JSON.stringify(firstToken)}`);
       }
     }
     return new ModlMap(mapEntries);
@@ -172,7 +176,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       }
     }
 
-    throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken.value)}'`);
+    throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken)}'`);
   } else if (firstToken.type === TokenType.INTEGER) {
     return new ModlInteger(firstToken.value as number);
   } else if (firstToken.type === TokenType.FLOAT) {
@@ -191,7 +195,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
     }
   }
 
-  throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken.value)}'`);
+  throw new ParserException(`Unexpected token: '${JSON.stringify(firstToken)}'`);
 };
 
 class ParserException extends Error {}

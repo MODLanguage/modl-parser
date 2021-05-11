@@ -150,4 +150,112 @@ describe('MODLParser', () => {
     expect(v2.value).to.equal('d');
     expect(v3.value).to.equal('f');
   });
+
+  it('Can parse a Pair with a Map at the root using =', () => {
+    const modl = parser('x=(a=b;c=d;e=f)');
+
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('x');
+
+    const map = pair.value as ModlMap;
+    const mapEntries = map.items;
+    expect(mapEntries.length).to.equal(3);
+
+    const p1 = mapEntries[0] as ModlPair;
+    const p2 = mapEntries[1] as ModlPair;
+    const p3 = mapEntries[2] as ModlPair;
+    const v1 = p1.value as ModlString;
+    const v2 = p2.value as ModlString;
+    const v3 = p3.value as ModlString;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('b');
+    expect(v2.value).to.equal('d');
+    expect(v3.value).to.equal('f');
+  });
+
+  it('Can parse a Pair with a Map at the root not using =', () => {
+    const modl = parser('x(a=b;c=d;e=f)');
+
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('x');
+
+    const map = pair.value as ModlMap;
+    const mapEntries = map.items;
+    expect(mapEntries.length).to.equal(3);
+
+    const p1 = mapEntries[0] as ModlPair;
+    const p2 = mapEntries[1] as ModlPair;
+    const p3 = mapEntries[2] as ModlPair;
+    const v1 = p1.value as ModlString;
+    const v2 = p2.value as ModlString;
+    const v3 = p3.value as ModlString;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('b');
+    expect(v2.value).to.equal('d');
+    expect(v3.value).to.equal('f');
+  });
+
+  it('Can parse a MODL Array at the root using =', () => {
+    const modl = parser('x=[a=b;c=d;e=f]');
+
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('x');
+
+    const array = pair.value as ModlArray;
+    const arrayEntries = array.items;
+    expect(arrayEntries.length).to.equal(3);
+
+    const p1 = arrayEntries[0] as ModlPair;
+    const p2 = arrayEntries[1] as ModlPair;
+    const p3 = arrayEntries[2] as ModlPair;
+    const v1 = p1.value as ModlString;
+    const v2 = p2.value as ModlString;
+    const v3 = p3.value as ModlString;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('b');
+    expect(v2.value).to.equal('d');
+    expect(v3.value).to.equal('f');
+  });
+
+  it('Can parse a MODL Array at the root not using =', () => {
+    const modl = parser('x[a=b;c=d;e=f]');
+
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('x');
+
+    const array = pair.value as ModlArray;
+    const arrayEntries = array.items;
+    expect(arrayEntries.length).to.equal(3);
+
+    const p1 = arrayEntries[0] as ModlPair;
+    const p2 = arrayEntries[1] as ModlPair;
+    const p3 = arrayEntries[2] as ModlPair;
+    const v1 = p1.value as ModlString;
+    const v2 = p2.value as ModlString;
+    const v3 = p3.value as ModlString;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('b');
+    expect(v2.value).to.equal('d');
+    expect(v3.value).to.equal('f');
+  });
 });
