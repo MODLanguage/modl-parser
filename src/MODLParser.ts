@@ -45,7 +45,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
     case TokenType.RBRACKET:
     case TokenType.STRUCT_SEP:
     case TokenType.EQUALS: {
-      return null;
+      throw new ParserException(`Invalid token: ${JSON.stringify(tok)}`);
     }
     case TokenType.NULL: {
       result = ModlBoolNull.ModlNull;
@@ -105,10 +105,16 @@ const parseModlValue = (s: TokenStream): ModlValue => {
     // Its an array
     const arrayEntries: ModlValue[] = [];
     while (s.length() > 0) {
+      let peek = s.peek();
+      if (peek && peek.type === TokenType.RBRACKET) {
+        // Consume the peeked token and break
+        s.next();
+        break;
+      }
       const ms = parseModlValue(s);
       arrayEntries.push(ms);
 
-      const peek = s.peek();
+      peek = s.peek();
       if (peek) {
         if (peek.type === TokenType.RBRACKET) {
           // Consume the peeked token and break
@@ -118,6 +124,10 @@ const parseModlValue = (s: TokenStream): ModlValue => {
         if (peek.type === TokenType.STRUCT_SEP) {
           // Consume the peeked token and continue
           s.next();
+          peek = s.peek();
+          if (peek && peek.type === TokenType.RBRACKET) {
+            throw new ParserException(`Unexpected ; before ] at ${peek}`);
+          }
         }
       } else {
         throw new ParserException(`Expected ']' near ${JSON.stringify(firstToken)}`);
@@ -128,10 +138,16 @@ const parseModlValue = (s: TokenStream): ModlValue => {
     // Its a map
     const mapEntries: ModlPair[] = [];
     while (s.length() > 0) {
+      let peek = s.peek();
+      if (peek && peek.type === TokenType.RPAREN) {
+        // Consume the peeked token and break
+        s.next();
+        break;
+      }
       const mp = parseModlValue(s);
       mapEntries.push(mp as ModlPair);
 
-      const peek = s.peek();
+      peek = s.peek();
       if (peek) {
         if (peek.type === TokenType.RPAREN) {
           // Consume the peeked token
@@ -141,6 +157,10 @@ const parseModlValue = (s: TokenStream): ModlValue => {
         if (peek.type === TokenType.STRUCT_SEP) {
           // Consume the peeked token and continue
           s.next();
+          peek = s.peek();
+          if (peek && peek.type === TokenType.RPAREN) {
+            throw new ParserException(`Unexpected ; before ] at ${peek}`);
+          }
         }
       } else {
         throw new ParserException(`Expected ')' near ${JSON.stringify(firstToken)}`);

@@ -55,6 +55,38 @@ describe('MODLParser', () => {
     expect(value).to.equal(ModlBoolNull.ModlFalse);
   });
 
+  it('Can parse an empty map', () => {
+    const modl = parser('()');
+    const value = modl.s as ModlStructure[];
+    expect(value.length).to.equal(1);
+    const map = value[0] as ModlMap;
+    expect(map.items.length).to.equal(0);
+  });
+
+  it('Can parse an empty array', () => {
+    const modl = parser('[]');
+    const value = modl.s as ModlStructure[];
+    expect(value.length).to.equal(1);
+    const array = value[0] as ModlArray;
+    expect(array.items.length).to.equal(0);
+  });
+
+  it('Can parse an empty map with ending semicolon', () => {
+    const modl = parser('();');
+    const value = modl.s as ModlStructure[];
+    expect(value.length).to.equal(1);
+    const map = value[0] as ModlMap;
+    expect(map.items.length).to.equal(0);
+  });
+
+  it('Can parse an empty array with ending semicolon', () => {
+    const modl = parser('[];');
+    const value = modl.s as ModlStructure[];
+    expect(value.length).to.equal(1);
+    const array = value[0] as ModlArray;
+    expect(array.items.length).to.equal(0);
+  });
+
   it('Can parse a MODL Pair at the root', () => {
     const modl = parser('a=b');
     const structures = modl.s as ModlStructure[];
