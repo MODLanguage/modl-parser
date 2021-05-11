@@ -20,12 +20,15 @@ const bad = [
   '[a=b;]',
   '[];;',
   '();;',
+  'a;b',
 ];
 describe('MODLParser bad grammar', () => {
   it('Can report bad grammar', () => {
     const modls = bad.map((s) => {
       try {
-        return parseModl(s);
+        const result = parseModl(s);
+        console.error(`Unexpected success for : ${s}`);
+        return result;
       } catch (e) {
         console.error(e.message);
       }

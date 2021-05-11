@@ -32,10 +32,6 @@ const parse = (s: TokenStream): ModlStructure[] | ModlPrimitive => {
 };
 
 const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
-  if (s.length() > 1) {
-    return null;
-  }
-
   let result: ModlPrimitive | null = null;
   const tok = s.next() as Token;
   switch (tok.type) {
@@ -43,9 +39,12 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
     case TokenType.RPAREN:
     case TokenType.LBRACKET:
     case TokenType.RBRACKET:
-    case TokenType.STRUCT_SEP:
     case TokenType.EQUALS: {
-      throw new ParserException(`Invalid token: ${tok.toS()}`);
+      if (s.length() === 0) {
+        throw new ParserException(`Unexpected token: ${tok.toS()}`);
+      }
+      s.pushBack(tok);
+      return null;
     }
     case TokenType.NULL: {
       result = ModlBoolNull.ModlNull;
@@ -77,6 +76,20 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
     }
     default: {
       throw new ParserException(`Unknown token type in: ${tok.toS()}`);
+    }
+  }
+  if (result !== null) {
+    const peek = s.peek();
+    if (peek && peek.type === TokenType.STRUCT_SEP) {
+      throw new ParserException(`Only one primitive is allowed at the root.`);
+    }
+    if (
+      peek &&
+      (peek.type === TokenType.LPAREN || peek.type === TokenType.LBRACKET || peek.type === TokenType.EQUALS)
+    ) {
+      // Its not a primitive
+      s.pushBack(tok);
+      return null;
     }
   }
   return result;
