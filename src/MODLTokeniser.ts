@@ -50,8 +50,13 @@ class Context {
   }
 
   next(): boolean {
-    while (WS.includes(this.s.charAt(this.tokStart))) {
+    let ws = this.s.charAt(this.tokStart);
+    while (ws != '' && WS.includes(ws)) {
       this.tokStart++;
+      ws = this.s.charAt(this.tokStart);
+    }
+    if (this.tokStart >= this.s.length) {
+      return false;
     }
     let tokType;
 
