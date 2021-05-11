@@ -10,12 +10,12 @@ import {
   ModlQuoted,
   ModlString,
   ModlStructure,
-  ModlValue,
+  ModlValue
 } from './Model';
 import { Token, tokeniser, TokenType } from './MODLTokeniser';
 import { TokenStream } from './TokenStream';
 
-export const parser = (s: string): Modl => {
+export const parseModl = (s: string): Modl => {
   const tokens = tokeniser(s);
 
   const root: ModlStructure[] | ModlPrimitive = parse(new TokenStream(tokens));
@@ -218,4 +218,4 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
 };
 
-class ParserException extends Error {}
+export class ParserException extends Error { }

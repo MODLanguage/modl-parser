@@ -10,53 +10,53 @@ import {
   ModlString,
   ModlStructure,
 } from '../src/Model';
-import { parser } from '../src/MODLParser';
+import { parseModl } from '../src/MODLParser';
 
 describe('MODLParser', () => {
   it('Can parse a string primitive at the root', () => {
-    const modl = parser('hello');
+    const modl = parseModl('hello');
     const value = modl.s as ModlString;
     expect(value.value).to.equal('hello');
   });
 
   it('Can parse a float primitive at the root', () => {
-    const modl = parser('2.54');
+    const modl = parseModl('2.54');
     const value = modl.s as ModlFloat;
     expect(value.value).to.equal(2.54);
   });
 
   it('Can parse an integer primitive at the root', () => {
-    const modl = parser('99');
+    const modl = parseModl('99');
     const value = modl.s as ModlInteger;
     expect(value.value).to.equal(99);
   });
 
   it('Can parse a quoted primitive at the root', () => {
-    const modl = parser('`hello`');
+    const modl = parseModl('`hello`');
     const value = modl.s as ModlQuoted;
     expect(value.value).to.equal('`hello`');
   });
 
   it('Can parse a null primitive at the root', () => {
-    const modl = parser('null');
+    const modl = parseModl('null');
     const value = modl.s as ModlBoolNull;
     expect(value).to.equal(ModlBoolNull.ModlNull);
   });
 
   it('Can parse a true primitive at the root', () => {
-    const modl = parser('true');
+    const modl = parseModl('true');
     const value = modl.s as ModlBoolNull;
     expect(value).to.equal(ModlBoolNull.ModlTrue);
   });
 
   it('Can parse a false primitive at the root', () => {
-    const modl = parser('false');
+    const modl = parseModl('false');
     const value = modl.s as ModlBoolNull;
     expect(value).to.equal(ModlBoolNull.ModlFalse);
   });
 
   it('Can parse an empty map', () => {
-    const modl = parser('()');
+    const modl = parseModl('()');
     const value = modl.s as ModlStructure[];
     expect(value.length).to.equal(1);
     const map = value[0] as ModlMap;
@@ -64,7 +64,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse an empty array', () => {
-    const modl = parser('[]');
+    const modl = parseModl('[]');
     const value = modl.s as ModlStructure[];
     expect(value.length).to.equal(1);
     const array = value[0] as ModlArray;
@@ -72,7 +72,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse an empty map with ending semicolon', () => {
-    const modl = parser('();');
+    const modl = parseModl('();');
     const value = modl.s as ModlStructure[];
     expect(value.length).to.equal(1);
     const map = value[0] as ModlMap;
@@ -80,7 +80,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse an empty array with ending semicolon', () => {
-    const modl = parser('[];');
+    const modl = parseModl('[];');
     const value = modl.s as ModlStructure[];
     expect(value.length).to.equal(1);
     const array = value[0] as ModlArray;
@@ -88,7 +88,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Pair at the root', () => {
-    const modl = parser('a=b');
+    const modl = parseModl('a=b');
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
     const pair = structures[0] as ModlPair;
@@ -98,7 +98,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Pair with quotes at the root - 1', () => {
-    const modl = parser('"a"="b"');
+    const modl = parseModl('"a"="b"');
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
     const pair = structures[0] as ModlPair;
@@ -108,7 +108,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Pair with quotes at the root - 2', () => {
-    const modl = parser('`a`=`b`');
+    const modl = parseModl('`a`=`b`');
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
     const pair = structures[0] as ModlPair;
@@ -118,7 +118,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Pair with quotes and embedded MODL tokens', () => {
-    const modl = parser('"a=[];()b"="c=[];()d"');
+    const modl = parseModl('"a=[];()b"="c=[];()d"');
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
     const pair = structures[0] as ModlPair;
@@ -128,7 +128,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a list of MODL Pairs at the root', () => {
-    const modl = parser('a=b;c=d;e=f');
+    const modl = parseModl('a=b;c=d;e=f');
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(3);
     const p1 = structures[0] as ModlPair;
@@ -146,7 +146,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Map at the root', () => {
-    const modl = parser('(a=b;c=d;e=f)');
+    const modl = parseModl('(a=b;c=d;e=f)');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
@@ -170,7 +170,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Array at the root', () => {
-    const modl = parser('[a=b;c=d;e=f]');
+    const modl = parseModl('[a=b;c=d;e=f]');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
@@ -194,7 +194,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a Pair with a Map at the root using =', () => {
-    const modl = parser('x=(a=b;c=d;e=f)');
+    const modl = parseModl('x=(a=b;c=d;e=f)');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
@@ -221,7 +221,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a Pair with a Map at the root not using =', () => {
-    const modl = parser('x(a=b;c=d;e=f)');
+    const modl = parseModl('x(a=b;c=d;e=f)');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
@@ -248,7 +248,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Array at the root using =', () => {
-    const modl = parser('x=[a=b;c=d;e=f]');
+    const modl = parseModl('x=[a=b;c=d;e=f]');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);
@@ -275,7 +275,7 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a MODL Array at the root not using =', () => {
-    const modl = parser('x[a=b;c=d;e=f]');
+    const modl = parseModl('x[a=b;c=d;e=f]');
 
     const structures = modl.s as ModlStructure[];
     expect(structures.length).to.equal(1);

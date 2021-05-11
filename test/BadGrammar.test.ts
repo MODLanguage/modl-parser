@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { parser } from '../src/MODLParser';
+import { parseModl } from '../src/MODLParser';
 
 const bad = [
   ';',
@@ -25,7 +25,7 @@ describe('MODLParser bad grammar', () => {
   it('Can report bad grammar', () => {
     const modls = bad.map((s) => {
       try {
-        return parser(s);
+        return parseModl(s);
       } catch (e) {
         console.error(e.message);
       }
