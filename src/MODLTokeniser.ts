@@ -4,7 +4,7 @@ export class Token {
     readonly value: string | number | boolean | null,
     readonly from: number,
     readonly to: number
-  ) { }
+  ) {}
   toS(): string {
     return `type: ${this.type.toString()}, from: ${this.from}, to: ${this.to}, value: "${this.value}"`;
   }
@@ -40,7 +40,7 @@ class Context {
   private tokEnd = 0;
   public tokens = new Array<Token>();
 
-  constructor(readonly s: string) { }
+  constructor(readonly s: string) {}
 
   parse(): Token[] {
     while (this.next()) {
@@ -148,4 +148,4 @@ class Context {
   }
 }
 
-export class TokeniserException extends Error { }
+export class TokeniserException extends Error {}
