@@ -1,8 +1,21 @@
 import { Token } from './MODLTokeniser';
 
+/**
+ * A stream of Tokens.
+ */
 export class TokenStream {
+  /**
+   * TokenStream constructor.
+   *
+   * @param tokens an array of Token objects.
+   */
   constructor(private readonly tokens: Token[]) {}
 
+  /**
+   * Consumes a token from the stream.
+   *
+   * @returns the next Token in the stream or undefined.
+   */
   next(): Token | undefined {
     let result: Token | undefined = undefined;
     if (this.tokens.length > 0) {
@@ -11,6 +24,11 @@ export class TokenStream {
     return result;
   }
 
+  /**
+   * Get the next token from the stream without consuming it.
+   *
+   * @returns the next Token in the stream or undefined.
+   */
   peek(): Token | undefined {
     let result: Token | undefined = undefined;
     if (this.tokens.length > 0) {
@@ -19,10 +37,20 @@ export class TokenStream {
     return result;
   }
 
+  /**
+   * Return a token token to the stream.
+   *
+   * @param t a Token object
+   */
   pushBack(t: Token): void {
     this.tokens.unshift(t);
   }
 
+  /**
+   * Get the number of remaining tokens in the stream.
+   *
+   * @returns the number of remaining tokens in the stream.
+   */
   length(): number {
     return this.tokens.length;
   }

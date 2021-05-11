@@ -5,8 +5,14 @@ export class Modl {
   constructor(readonly s: ModlStructure[] | ModlPrimitive) {}
 }
 
+/**
+ * ModlStructures
+ */
 export type ModlStructure = ModlMap | ModlArray | ModlPair;
 
+/**
+ * ModlMap
+ */
 export class ModlMap {
   constructor(readonly items: ModlMapItem[]) {}
 }
@@ -25,10 +31,19 @@ export class ModlPair {
   constructor(readonly key: string | ModlQuoted, readonly value: ModlValue | ModlMap | ModlArray) {}
 }
 
+/**
+ * ModlMapItem
+ */
 export type ModlMapItem = ModlPair;
 
+/**
+ * ModlValues
+ */
 export type ModlValue = ModlMap | ModlPair | ModlArray | ModlPrimitive;
 
+/**
+ * ModlPrimitives
+ */
 export type ModlPrimitive = ModlQuoted | ModlInteger | ModlFloat | ModlString | ModlBoolNull;
 
 /**

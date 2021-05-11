@@ -15,14 +15,39 @@ import {
 import { Token, tokeniser, TokenType } from './MODLTokeniser';
 import { TokenStream } from './TokenStream';
 
+//------------------------------------------------------------------------------------------------------------------------
+// Exports
+//------------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Parse a MODL string into a MODL object.
+ *
+ * @param s a MODL string
+ * @returns a Modl object
+ */
 export const parseModl = (s: string): Modl => {
   const tokens = tokeniser(s);
 
-  const root: ModlStructure[] | ModlPrimitive = parse(new TokenStream(tokens));
+  const rootItems: ModlStructure[] | ModlPrimitive = parse(new TokenStream(tokens));
 
-  return new Modl(root);
+  return new Modl(rootItems);
 };
 
+/**
+ * Parsing errors
+ */
+export class ParserException extends Error {}
+
+//------------------------------------------------------------------------------------------------------------------------
+// Internals
+//------------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Parse a MODL TokenStream to a ModlStructure array or a ModlPrimitive
+ *
+ * @param s a TokenStream
+ * @returns a ModlStructure array or a ModlPrimitive
+ */
 const parse = (s: TokenStream): ModlStructure[] | ModlPrimitive => {
   const rootPrimitive: ModlPrimitive | null = parsePrimitive(s);
   if (rootPrimitive !== null) {
@@ -31,6 +56,12 @@ const parse = (s: TokenStream): ModlStructure[] | ModlPrimitive => {
   return parseStructures(s);
 };
 
+/**
+ * Try to parse a ModlPrimitive from a TokenStream.
+ *
+ * @param s a TokenStream
+ * @returns a ModlPrimitive or null
+ */
 const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
   let result: ModlPrimitive | null = null;
   const tok = s.next() as Token;
@@ -95,6 +126,12 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
   return result;
 };
 
+/**
+ * Parse an array of ModlStructure objects from a TokenStream.
+ *
+ * @param s a TokenStream
+ * @returns a ModlStructure array
+ */
 const parseStructures = (s: TokenStream): ModlStructure[] => {
   const result: ModlStructure[] = [];
   while (s.length() > 0) {
@@ -111,6 +148,12 @@ const parseStructures = (s: TokenStream): ModlStructure[] => {
   return result;
 };
 
+/**
+ * Parse ModlValues recursively from a TokenStream.
+ *
+ * @param s a TokenStream
+ * @returns a ModlValue
+ */
 const parseModlValue = (s: TokenStream): ModlValue => {
   const firstToken = s.next() as Token;
 
@@ -230,5 +273,3 @@ const parseModlValue = (s: TokenStream): ModlValue => {
 
   throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
 };
-
-export class ParserException extends Error {}

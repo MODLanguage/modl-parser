@@ -1,24 +1,62 @@
+//------------------------------------------------------------------------------------------------------------------------
+// Exports
+//------------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Token objects
+ */
 export class Token {
+  /**
+   * Token Constructor.
+   *
+   * @param type the TokenType
+   * @param value the Token value
+   * @param from the start position in the MODL string.
+   * @param to the end position in the MODL string.
+   */
   constructor(
     readonly type: TokenType,
     readonly value: string | number | boolean | null,
     readonly from: number,
     readonly to: number
   ) {}
+
+  /**
+   * Convert a Token to a string.
+   *
+   * @returns a printable string
+   */
   toS(): string {
     return `type: ${this.type.toString()}, from: ${this.from}, to: ${this.to}, value: "${this.value}"`;
   }
 }
 
+/**
+ * Parse a MODL string into an array of tokens.
+ *
+ * @param s a string
+ * @returns a Token array
+ */
 export const tokeniser = (s: string): Token[] => {
   return new Context(s).parse();
 };
 
+/**
+ * Tokeniser errors
+ */
+export class TokeniserException extends Error {}
+
+//------------------------------
+// Constants
+//------------------------------
 const WS = ' \t\r\n';
 const nonStringTokens = '[]();"=';
 const INTEGER_REGEX = new RegExp(/^-?\d+$/);
 const FLOAT_REGEX = new RegExp(/^[-+]?([0-9]*[.])?[0-9]+([eE][-+]?\d+)?$/);
 
+/**
+ * TokenTypes
+ */
 export enum TokenType {
   LPAREN = 'LPAREN',
   RPAREN = 'RPAREN',
@@ -35,6 +73,13 @@ export enum TokenType {
   FLOAT = 'FLOAT',
 }
 
+//------------------------------------------------------------------------------------------------------------------------
+// Internals
+//------------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Hold data about the current parser state
+ */
 class Context {
   private tokStart = 0;
   private tokEnd = 0;
@@ -42,6 +87,11 @@ class Context {
 
   constructor(readonly s: string) {}
 
+  /**
+   * The token parsing loop.
+   *
+   * @returns a Token[]
+   */
   parse(): Token[] {
     while (this.next()) {
       // process the next token
@@ -49,6 +99,11 @@ class Context {
     return this.tokens;
   }
 
+  /**
+   * Parse the next token and add it to the Token array.
+   *
+   * @returns true if the are more possible tokens to be found.
+   */
   next(): boolean {
     let ws = this.s.charAt(this.tokStart);
     while (ws != '' && WS.includes(ws)) {
@@ -123,6 +178,14 @@ class Context {
     return this.tokEnd < this.s.length;
   }
 
+  /**
+   * Find the end position of a quoted string.
+   *
+   * @param s the MODL string
+   * @param start the start position
+   * @param quoteChar the quote character for this quoted string
+   * @returns the end position of the next token in the string.
+   */
   scanToEndOfQuoted(s: string, start: number, quoteChar: string): number {
     let end = start + 1;
 
@@ -144,6 +207,13 @@ class Context {
     return end + 1;
   }
 
+  /**
+   * Find the end position of a string.
+   *
+   * @param s the MODL string
+   * @param start the start position
+   * @returns the end position of the next token in the string
+   */
   scanToEndOfString(s: string, start: number): number {
     let end = start + 1;
     while (end < s.length && !nonStringTokens.includes(s.charAt(end))) {
@@ -152,5 +222,3 @@ class Context {
     return end;
   }
 }
-
-export class TokeniserException extends Error {}
