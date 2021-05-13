@@ -21,6 +21,8 @@ const bad = [
   '[];;',
   '();;',
   'a;b',
+  'a=`b`c`d`',
+  'a=b`c`d',
 ];
 describe('MODLParser bad grammar', () => {
   it('Can report bad grammar', () => {

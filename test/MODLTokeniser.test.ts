@@ -165,10 +165,10 @@ describe('MODLTokeniser', () => {
   });
 
   it('Can tokenise a MODL pair with embedded graves', () => {
-    const tokens = tokeniser('test=%`missing`');
+    const tokens = tokeniser('test="xx `missing` xx "');
     expect(tokens.length).to.equal(3);
     expect(tokens[0].value).to.equal('test');
     expect(tokens[1].value).to.equal('=');
-    expect(tokens[2].value).to.equal('%`missing`');
+    expect(tokens[2].value).to.equal('"xx `missing` xx "');
   });
 });
