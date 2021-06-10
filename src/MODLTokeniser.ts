@@ -52,7 +52,7 @@ export class TokeniserException extends Error {}
 const WS = ' \t\r\n';
 const nonStringTokens = '[]();"=`';
 const INTEGER_REGEX = new RegExp(/^-?\d+$/);
-const FLOAT_REGEX = new RegExp(/^[-+]?([0-9]*[.])?[0-9]+([eE][-+]?\d+)?$/);
+const FLOAT_REGEX = new RegExp(/^-?([0-9]*[.])?[0-9]+([eE][-+]?\d+)?$/);
 
 /**
  * TokenTypes

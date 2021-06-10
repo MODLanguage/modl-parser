@@ -25,6 +25,12 @@ describe('MODLParser', () => {
     expect(value.value).to.equal(2.54);
   });
 
+  it('Can parse a telephone primitive at the root', () => {
+    const modl = parseModl('+441270123456');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('+441270123456');
+  });
+
   it('Can parse an integer primitive at the root', () => {
     const modl = parseModl('99');
     const value = modl.s as ModlInteger;
