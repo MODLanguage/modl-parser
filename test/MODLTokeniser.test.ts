@@ -171,4 +171,12 @@ describe('MODLTokeniser', () => {
     expect(tokens[1].value).to.equal('=');
     expect(tokens[2].value).to.equal('"xx `missing` xx "');
   });
+
+  it('Can tokenise a MODL pair with a number that should be treated as a string', () => {
+    const tokens = tokeniser('test=+44');
+    expect(tokens.length).to.equal(3);
+    expect(tokens[0].value).to.equal('test');
+    expect(tokens[1].value).to.equal('=');
+    expect(tokens[2].value).to.equal('+44');
+  });
 });

@@ -28,7 +28,7 @@ export class ModlArray {
  * Modl pair
  */
 export class ModlPair {
-  constructor(readonly key: string | ModlQuoted, readonly value: ModlValue | ModlMap | ModlArray) {}
+  constructor(readonly key: string | ModlQuoted, readonly value: ModlPrimitive | ModlMap | ModlArray) {}
 }
 
 /**

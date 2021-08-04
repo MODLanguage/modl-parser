@@ -149,6 +149,86 @@ const parseStructures = (s: TokenStream): ModlStructure[] => {
 };
 
 /**
+ *
+ * @param s
+ */
+const parseModlMap = (s: TokenStream): ModlMap => {
+  const firstToken = s.next() as Token;
+  // Its a map
+  const mapEntries: ModlPair[] = [];
+  while (!s.empty()) {
+    let peek = s.peek();
+    if (peek && peek.type === TokenType.RPAREN) {
+      // Consume the peeked token and break
+      s.next();
+      break;
+    }
+    const mp = parseModlValue(s);
+    mapEntries.push(mp as ModlPair);
+
+    peek = s.peek();
+    if (peek) {
+      if (peek.type === TokenType.RPAREN) {
+        // Consume the peeked token
+        s.next();
+        break;
+      }
+      if (peek.type === TokenType.STRUCT_SEP) {
+        // Consume the peeked token and continue
+        s.next();
+        peek = s.peek();
+        if (peek && peek.type === TokenType.RPAREN) {
+          throw new ParserException(`Unexpected ; before ] at ${peek}`);
+        }
+      }
+    } else {
+      throw new ParserException(`Expected ')' near ${firstToken.toS()}`);
+    }
+  }
+  return new ModlMap(mapEntries);
+};
+
+/**
+ *
+ * @param s
+ * @returns
+ */
+const parseModlArray = (s: TokenStream): ModlArray => {
+  const firstToken = s.next() as Token;
+  // Its an array
+  const arrayEntries: ModlValue[] = [];
+  while (!s.empty()) {
+    let peek = s.peek();
+    if (peek && peek.type === TokenType.RBRACKET) {
+      // Consume the peeked token and break
+      s.next();
+      break;
+    }
+    const ms = parseModlValue(s);
+    arrayEntries.push(ms);
+
+    peek = s.peek();
+    if (peek) {
+      if (peek.type === TokenType.RBRACKET) {
+        // Consume the peeked token and break
+        s.next();
+        break;
+      }
+      if (peek.type === TokenType.STRUCT_SEP) {
+        // Consume the peeked token and continue
+        s.next();
+        peek = s.peek();
+        if (peek && peek.type === TokenType.RBRACKET) {
+          throw new ParserException(`Unexpected ; before ] at ${peek}`);
+        }
+      }
+    } else {
+      throw new ParserException(`Expected ']' near ${firstToken.toS()}`);
+    }
+  }
+  return new ModlArray(arrayEntries);
+};
+/**
  * Parse ModlValues recursively from a TokenStream.
  *
  * @param s a TokenStream
@@ -158,71 +238,11 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   const firstToken = s.next() as Token;
 
   if (firstToken.type === TokenType.LBRACKET) {
-    // Its an array
-    const arrayEntries: ModlValue[] = [];
-    while (!s.empty()) {
-      let peek = s.peek();
-      if (peek && peek.type === TokenType.RBRACKET) {
-        // Consume the peeked token and break
-        s.next();
-        break;
-      }
-      const ms = parseModlValue(s);
-      arrayEntries.push(ms);
-
-      peek = s.peek();
-      if (peek) {
-        if (peek.type === TokenType.RBRACKET) {
-          // Consume the peeked token and break
-          s.next();
-          break;
-        }
-        if (peek.type === TokenType.STRUCT_SEP) {
-          // Consume the peeked token and continue
-          s.next();
-          peek = s.peek();
-          if (peek && peek.type === TokenType.RBRACKET) {
-            throw new ParserException(`Unexpected ; before ] at ${peek}`);
-          }
-        }
-      } else {
-        throw new ParserException(`Expected ']' near ${firstToken.toS()}`);
-      }
-    }
-    return new ModlArray(arrayEntries);
+    s.pushBack(firstToken);
+    return parseModlArray(s);
   } else if (firstToken.type === TokenType.LPAREN) {
-    // Its a map
-    const mapEntries: ModlPair[] = [];
-    while (!s.empty()) {
-      let peek = s.peek();
-      if (peek && peek.type === TokenType.RPAREN) {
-        // Consume the peeked token and break
-        s.next();
-        break;
-      }
-      const mp = parseModlValue(s);
-      mapEntries.push(mp as ModlPair);
-
-      peek = s.peek();
-      if (peek) {
-        if (peek.type === TokenType.RPAREN) {
-          // Consume the peeked token
-          s.next();
-          break;
-        }
-        if (peek.type === TokenType.STRUCT_SEP) {
-          // Consume the peeked token and continue
-          s.next();
-          peek = s.peek();
-          if (peek && peek.type === TokenType.RPAREN) {
-            throw new ParserException(`Unexpected ; before ] at ${peek}`);
-          }
-        }
-      } else {
-        throw new ParserException(`Expected ')' near ${firstToken.toS()}`);
-      }
-    }
-    return new ModlMap(mapEntries);
+    s.pushBack(firstToken);
+    return parseModlMap(s);
   } else if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.QUOTED) {
     const peek = s.peek();
 
@@ -231,12 +251,72 @@ const parseModlValue = (s: TokenStream): ModlValue => {
       // its a pair
       // Consume the = token
       s.next();
-      return new ModlPair(key, parseModlValue(s));
+      return new ModlPair(key, parsePairValue(s));
     }
 
     if (peek && (peek.type === TokenType.LBRACKET || peek.type === TokenType.LPAREN)) {
       // Its still a pair
-      return new ModlPair(key, parseModlValue(s));
+      return new ModlPair(key, parsePairValue(s));
+    }
+
+    if (
+      !peek ||
+      (peek &&
+        (peek.type === TokenType.STRUCT_SEP || peek.type === TokenType.RPAREN || peek.type === TokenType.RBRACKET))
+    ) {
+      // Its simply a string or quoted string
+      if (firstToken.type === TokenType.STRING) {
+        return new ModlString(firstToken.value as string);
+      } else {
+        return new ModlQuoted(firstToken.value as string);
+      }
+    }
+
+    throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
+  } else if (firstToken.type === TokenType.INTEGER) {
+    return new ModlInteger(firstToken.value as number);
+  } else if (firstToken.type === TokenType.FLOAT) {
+    return new ModlFloat(firstToken.value as number);
+  } else if (firstToken.type === TokenType.NULL) {
+    return ModlBoolNull.ModlNull;
+  } else if (firstToken.type === TokenType.TRUE) {
+    return ModlBoolNull.ModlTrue;
+  } else if (firstToken.type === TokenType.FALSE) {
+    return ModlBoolNull.ModlFalse;
+  } else {
+    s.pushBack(firstToken);
+    const maybePrimitive = parsePrimitive(s);
+    if (maybePrimitive) {
+      return maybePrimitive;
+    }
+  }
+  throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
+};
+/**
+ * Parse ModlValues recursively from a TokenStream.
+ *
+ * @param s a TokenStream
+ * @returns a ModlValue
+ */
+const parsePairValue = (s: TokenStream): ModlPrimitive | ModlMap | ModlArray => {
+  const firstToken = s.next() as Token;
+
+  if (firstToken.type === TokenType.LBRACKET) {
+    s.pushBack(firstToken);
+    return parseModlArray(s);
+  } else if (firstToken.type === TokenType.LPAREN) {
+    s.pushBack(firstToken);
+    return parseModlMap(s);
+  } else if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.QUOTED) {
+    const peek = s.peek();
+
+    if (peek && peek.type === TokenType.EQUALS) {
+      throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
+    }
+
+    if (peek && (peek.type === TokenType.LBRACKET || peek.type === TokenType.LPAREN)) {
+      // Its still a pair
+      throw new ParserException(`Unexpected token: '${firstToken.toS()}'`);
     }
 
     if (

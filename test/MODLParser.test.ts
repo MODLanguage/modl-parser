@@ -31,6 +31,14 @@ describe('MODLParser', () => {
     expect(value.value).to.equal('+441270123456');
   });
 
+  it('Can parse a telephone primitive in a pair', () => {
+    const modl = parseModl('x=+441270123456');
+    const pairs = modl.s as Array<ModlPair>;
+    const pairValue = pairs[0].value as ModlString;
+    const value = pairValue.value;
+    expect(value).to.equal('+441270123456');
+  });
+
   it('Can parse an integer primitive at the root', () => {
     const modl = parseModl('99');
     const value = modl.s as ModlInteger;
@@ -305,5 +313,9 @@ describe('MODLParser', () => {
     expect(v1.value).to.equal('b');
     expect(v2.value).to.equal('d');
     expect(v3.value).to.equal('f');
+  });
+
+  it('Can reject a=b=1', () => {
+    expect(() => parseModl('a=b=1')).to.throw(Error, 'Unexpected token: \'type: STRING, from: 2, to: 3, value: "b"\'');
   });
 });
