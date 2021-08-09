@@ -121,6 +121,8 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
       // Its not a primitive
       s.pushBack(tok);
       return null;
+    } else if (peek) {
+      throw new ParserException(`Unexpected token: ${peek.toS()}`);
     }
   }
   return result;

@@ -23,6 +23,7 @@ const bad = [
   'a;b',
   'a=`b`c`d`',
   'a=b`c`d',
+  '{ "t": ["+18002224357"] }',
 ];
 describe('MODLParser bad grammar', () => {
   it('Can report bad grammar', () => {
