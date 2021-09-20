@@ -10,3 +10,11 @@ const result = parseModl('x=y');
 
 console.log(JSON.stringify(result));
 ```
+Or in JavaScript (e.g. using RunKit):
+```JavaScript
+const modlparser = require("modl-parser")
+
+const result = modlparser.parser('x=y');
+
+console.log(JSON.stringify(result));
+```
