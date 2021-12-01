@@ -1,6 +1,6 @@
 {
   "name": "modl-parser",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "A MODL parser in TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

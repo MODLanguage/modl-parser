@@ -218,9 +218,25 @@ class Context {
    */
   private scanToEndOfString(s: string, start: number): number {
     let end = start + 1;
-    while (end < s.length && !nonStringTokens.includes(s.charAt(end))) {
+    while (end < s.length) {
+      if (nonStringTokens.includes(s.charAt(end)) && !this.escaped(s, end - 1)) {
+        break;
+      }
       end++;
     }
     return end;
+  }
+
+  /**
+   * Check whether there is an escape character at the index position.
+   *
+   * @param s the string
+   * @param index the index
+   */
+  private escaped(s: string, index: number): boolean {
+    if (index >= 0 && (s.charAt(index) == '~' || s.charAt(index) == '\\')) {
+      return true;
+    }
+    return false;
   }
 }
