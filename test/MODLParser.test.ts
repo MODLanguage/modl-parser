@@ -318,4 +318,60 @@ describe('MODLParser', () => {
   it('Can reject a=b=1', () => {
     expect(() => parseModl('a=b=1')).to.throw(Error, 'Unexpected token: \'type: STRING, from: 2, to: 3, value: "b"\'');
   });
+
+  it('Can parse a brace-string', () => {
+    const modl = parseModl('{hello}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{hello}');
+  });
+
+  it('Can parse a complex brace-string - 1', () => {
+    const modl = parseModl('{he(){llo}[];:`"\' \n\t\b\v\rWorld}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{he(){llo}[];:`"\' \n\t\b\v\rWorld}');
+  });
+
+  it('Can parse a complex brace-string - 2', () => {
+    const modl = parseModl('{he(llo~}[];:`"\' \n\t\b\v\rWorld}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{he(llo~}[];:`"\' \n\t\b\v\rWorld}');
+  });
+
+  it('Can parse a complex brace-string - 3', () => {
+    const modl = parseModl('x[a={b};c={d};e={f}]');
+
+    const structures = modl.s as ModlStructure[];
+    expect(structures.length).to.equal(1);
+
+    const pair = structures[0] as ModlPair;
+    expect(pair.key).to.equal('x');
+
+    const array = pair.value as ModlArray;
+    const arrayEntries = array.items;
+    expect(arrayEntries.length).to.equal(3);
+
+    const p1 = arrayEntries[0] as ModlPair;
+    const p2 = arrayEntries[1] as ModlPair;
+    const p3 = arrayEntries[2] as ModlPair;
+    const v1 = p1.value as ModlQuoted;
+    const v2 = p2.value as ModlQuoted;
+    const v3 = p3.value as ModlQuoted;
+    expect(p1.key).to.equal('a');
+    expect(p2.key).to.equal('c');
+    expect(p3.key).to.equal('e');
+    expect(v1.value).to.equal('{b}');
+    expect(v2.value).to.equal('{d}');
+    expect(v3.value).to.equal('{f}');
+  });
+
+  it('Can reject a bad brace-string - 1', () => {
+    expect(() => parseModl('{hello} world')).to.throw(
+      Error,
+      'Unexpected token: type: STRING, from: 8, to: 13, value: "world"'
+    );
+  });
+
+  it('Can reject a bad brace-string - 2', () => {
+    expect(() => parseModl('{hello')).to.throw(Error, "Unclosed brace: '}' in {hello near 0:6");
+  });
 });

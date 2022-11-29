@@ -105,6 +105,10 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
       result = new ModlFloat(tok.value as number);
       break;
     }
+    case TokenType.BRACED: {
+      result = new ModlQuoted(tok.value as string);
+      break;
+    }
     default: {
       throw new ParserException(`Unknown token type in: ${tok.toS()}`);
     }
@@ -245,7 +249,11 @@ const parseModlValue = (s: TokenStream): ModlValue => {
   } else if (firstToken.type === TokenType.LPAREN) {
     s.pushBack(firstToken);
     return parseModlMap(s);
-  } else if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.QUOTED) {
+  } else if (
+    firstToken.type === TokenType.STRING ||
+    firstToken.type === TokenType.QUOTED ||
+    firstToken.type === TokenType.BRACED
+  ) {
     const peek = s.peek();
 
     const key = firstToken.value as string;
@@ -309,7 +317,11 @@ const parsePairValue = (s: TokenStream): ModlPrimitive | ModlMap | ModlArray => 
   } else if (firstToken.type === TokenType.LPAREN) {
     s.pushBack(firstToken);
     return parseModlMap(s);
-  } else if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.QUOTED) {
+  } else if (
+    firstToken.type === TokenType.STRING ||
+    firstToken.type === TokenType.QUOTED ||
+    firstToken.type === TokenType.BRACED
+  ) {
     const peek = s.peek();
 
     if (peek && peek.type === TokenType.EQUALS) {
