@@ -364,6 +364,30 @@ describe('MODLParser', () => {
     expect(v3.value).to.equal('{f}');
   });
 
+  it('Can parse a complex brace-string - 4', () => {
+    const modl = parseModl('{~~}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{~~}');
+  });
+
+  it('Can parse a complex brace-string - 5', () => {
+    const modl = parseModl('{\\\\}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{\\\\}');
+  });
+
+  it('Can parse a complex brace-string - 6', () => {
+    const modl = parseModl('{\\}}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{\\}}');
+  });
+
+  it('Can parse a complex brace-string - 7', () => {
+    const modl = parseModl('{~}}');
+    const value = modl.s as ModlString;
+    expect(value.value).to.equal('{~}}');
+  });
+
   it('Can reject a bad brace-string - 1', () => {
     expect(() => parseModl('{hello} world')).to.throw(
       Error,

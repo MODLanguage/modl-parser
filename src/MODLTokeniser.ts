@@ -197,6 +197,7 @@ class Context {
    */
   private scanToEndOfQuoted(s: string, start: number, quoteChar: string): number {
     let end = start + 1;
+    let prev2Char = ' ';
 
     while (end < s.length) {
       const endChar = s.charAt(end);
@@ -207,8 +208,12 @@ class Context {
         if (prevChar !== '\\' && prevChar !== '~') {
           break;
         }
+        if ((prevChar === '\\' || prevChar === '~') && (prev2Char === '\\' || prev2Char === '~')) {
+          break;
+        }
       }
       end++;
+      prev2Char = prevChar;
     }
     if (s.charAt(end) !== quoteChar) {
       throw new TokeniserException(`Unclosed quote: ${quoteChar} in ${this.s} near ${start}:${end}`);
@@ -225,25 +230,22 @@ class Context {
    */
   private scanToEndOfString(s: string, start: number): number {
     let end = start + 1;
+    let prev2Char = ' ';
+
     while (end < s.length) {
-      if (nonStringTokens.includes(s.charAt(end)) && !this.escaped(s, end - 1)) {
-        break;
+      const prevChar = s.charAt(end - 1);
+
+      if (nonStringTokens.includes(s.charAt(end))) {
+        if (prevChar !== '\\' && prevChar !== '~') {
+          break;
+        }
+        if ((prevChar === '\\' || prevChar === '~') && (prev2Char === '\\' || prev2Char === '~')) {
+          break;
+        }
       }
       end++;
+      prev2Char = prevChar;
     }
     return end;
-  }
-
-  /**
-   * Check whether there is an escape character at the index position.
-   *
-   * @param s the string
-   * @param index the index
-   */
-  private escaped(s: string, index: number): boolean {
-    if (index >= 0 && (s.charAt(index) == '~' || s.charAt(index) == '\\')) {
-      return true;
-    }
-    return false;
   }
 }
