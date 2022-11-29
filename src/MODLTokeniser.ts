@@ -152,7 +152,7 @@ class Context {
       }
       case '{': {
         tokType = TokenType.BRACED;
-        this.tokEnd = this.scanToEndOfBraced(this.s, this.tokStart);
+        this.tokEnd = this.scanToEndOfQuoted(this.s, this.tokStart, '}');
         break;
       }
       case '`':
@@ -185,43 +185,6 @@ class Context {
     }
     this.tokStart = this.tokEnd;
     return this.tokEnd < this.s.length;
-  }
-
-  /**
-   * Find the end position of a brace-quoted string.
-   *
-   * @param s the MODL string
-   * @param start the start position
-   * @returns the end position of the next token in the string.
-   */
-  private scanToEndOfBraced(s: string, start: number): number {
-    let end = start + 1;
-    let nested = 1;
-
-    while (end < s.length) {
-      const endChar = s.charAt(end);
-      const prevChar = s.charAt(end - 1);
-
-      if (endChar === '{') {
-        if (prevChar !== '\\' && prevChar !== '~') {
-          nested += 1;
-        }
-      }
-
-      if (endChar === '}') {
-        if (prevChar !== '\\' && prevChar !== '~') {
-          nested -= 1;
-          if (nested === 0) {
-            break;
-          }
-        }
-      }
-      end++;
-    }
-    if (nested != 0) {
-      throw new TokeniserException(`Unclosed brace: '}' in ${this.s} near ${start}:${end}`);
-    }
-    return end + 1;
   }
 
   /**

@@ -326,9 +326,9 @@ describe('MODLParser', () => {
   });
 
   it('Can parse a complex brace-string - 1', () => {
-    const modl = parseModl('{he(){llo}[];:`"\' \n\t\b\v\rWorld}');
+    const modl = parseModl('{he(){llo~}[];:`"\' \n\t\b\v\rWorld}');
     const value = modl.s as ModlString;
-    expect(value.value).to.equal('{he(){llo}[];:`"\' \n\t\b\v\rWorld}');
+    expect(value.value).to.equal('{he(){llo~}[];:`"\' \n\t\b\v\rWorld}');
   });
 
   it('Can parse a complex brace-string - 2', () => {
@@ -372,6 +372,6 @@ describe('MODLParser', () => {
   });
 
   it('Can reject a bad brace-string - 2', () => {
-    expect(() => parseModl('{hello')).to.throw(Error, "Unclosed brace: '}' in {hello near 0:6");
+    expect(() => parseModl('{hello')).to.throw(Error, 'Unclosed quote: } in {hello near 0:6');
   });
 });

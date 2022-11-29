@@ -106,7 +106,7 @@ const parsePrimitive = (s: TokenStream): ModlPrimitive | null => {
       break;
     }
     case TokenType.BRACED: {
-      result = new ModlQuoted(tok.value as string);
+      result = new ModlString(tok.value as string);
       break;
     }
     default: {
@@ -275,7 +275,7 @@ const parseModlValue = (s: TokenStream): ModlValue => {
         (peek.type === TokenType.STRUCT_SEP || peek.type === TokenType.RPAREN || peek.type === TokenType.RBRACKET))
     ) {
       // Its simply a string or quoted string
-      if (firstToken.type === TokenType.STRING) {
+      if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.BRACED) {
         return new ModlString(firstToken.value as string);
       } else {
         return new ModlQuoted(firstToken.value as string);
@@ -339,7 +339,7 @@ const parsePairValue = (s: TokenStream): ModlPrimitive | ModlMap | ModlArray => 
         (peek.type === TokenType.STRUCT_SEP || peek.type === TokenType.RPAREN || peek.type === TokenType.RBRACKET))
     ) {
       // Its simply a string or quoted string
-      if (firstToken.type === TokenType.STRING) {
+      if (firstToken.type === TokenType.STRING || firstToken.type === TokenType.BRACED) {
         return new ModlString(firstToken.value as string);
       } else {
         return new ModlQuoted(firstToken.value as string);
